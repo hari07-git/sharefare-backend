@@ -1,9 +1,8 @@
 from flask import Blueprint, request, jsonify
 from models import db, User
 from werkzeug.security import generate_password_hash, check_password_hash
-
 auth = Blueprint('auth', __name__)
-
+##
 @auth.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()

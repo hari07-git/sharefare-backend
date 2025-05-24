@@ -168,7 +168,7 @@ def register():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
+###
 # ----------------------
 # User Login
 # ----------------------

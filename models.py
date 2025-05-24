@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import date
 
 db = SQLAlchemy()
-
+##
 class Ride(db.Model):
     __tablename__ = 'rides'
 
