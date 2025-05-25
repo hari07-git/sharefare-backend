@@ -2,25 +2,29 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import date
 
 db = SQLAlchemy()
-##
+
+# ----------------------
+# Ride Model
+# ----------------------
 class Ride(db.Model):
     __tablename__ = 'rides'
 
     id = db.Column(db.Integer, primary_key=True)
     source = db.Column(db.String(100), nullable=False)
     destination = db.Column(db.String(100), nullable=False)
-    date = db.Column(db.Date, nullable=False)  # Changed to Date type
+    date = db.Column(db.Date, nullable=False)
     price = db.Column(db.Float, nullable=False)
     driver = db.Column(db.String(100), nullable=False)
 
-    bookings = db.relationship('Booking', backref='ride', lazy=True)
+    # Relationship to bookings
+    bookings = db.relationship('Booking', backref='ride', lazy=True, cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
             'id': self.id,
             'source': self.source,
             'destination': self.destination,
-            'date': self.date.strftime('%Y-%m-%d'),  # Convert Date to string for JSON
+            'date': self.date.strftime('%Y-%m-%d'),
             'price': self.price,
             'driver': self.driver
         }
@@ -28,16 +32,19 @@ class Ride(db.Model):
     def __repr__(self):
         return f'<Ride {self.source} to {self.destination} on {self.date}>'
 
-
+# ----------------------
+# User Model
+# ----------------------
 class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password = db.Column(db.String(200), nullable=False)
 
-    bookings = db.relationship('Booking', backref='user', lazy=True)
+    # Relationship to bookings
+    bookings = db.relationship('Booking', backref='user', lazy=True, cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
@@ -49,14 +56,16 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.email}>'
 
-
+# ----------------------
+# Booking Model
+# ----------------------
 class Booking(db.Model):
     __tablename__ = 'bookings'
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     ride_id = db.Column(db.Integer, db.ForeignKey('rides.id'), nullable=False)
-    status = db.Column(db.String(20), default='booked')  # e.g., booked, cancelled, completed
+    status = db.Column(db.String(20), nullable=False, default='booked')
 
     def to_dict(self):
         return {
