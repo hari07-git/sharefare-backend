@@ -10,8 +10,8 @@ api = Blueprint('api', __name__)
 # ----------------------
 @api.route('/search', methods=['GET'])
 def search_rides():
-    source = request.args.get('from')
-    destination = request.args.get('to')
+    source = request.args.get('source')
+    destination = request.args.get('destination')
     date_str = request.args.get('date')
 
     if not source or not destination or not date_str:
@@ -23,7 +23,7 @@ def search_rides():
         return jsonify({'error': 'Invalid date format. Use YYYY-MM-DD'}), 400
 
     results = Ride.query.filter_by(source=source, destination=destination, date=date_obj).all()
-    return jsonify([r.to_dict() for r in results]), 200
+    return jsonify({'rides': [r.to_dict() for r in results]}), 200
 
 # ----------------------
 # Offer Ride

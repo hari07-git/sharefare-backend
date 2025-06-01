@@ -1,8 +1,37 @@
-from app import db
-from models import Ride
+from app import app
+from models import db, Ride, User
+from datetime import date
 
-ride1 = Ride(from_location="Hyderabad", to_location="Warangal", date="2025-05-05", price="250", driver_name="Akhil K.")
-ride2 = Ride(from_location="Chennai", to_location="Bangalore", date="2025-05-06", price="500", driver_name="Sita R.")
+with app.app_context():
+    # Clear existing data
+    Ride.query.delete()
+    User.query.delete()
 
-db.session.add_all([ride1, ride2])
-db.session.commit()
+    # Create users
+    user1 = User(name="Alice", email="alice@example.com", password="alice123")
+    user2 = User(name="Bob", email="bob@example.com", password="bob123")
+
+    # Add users to DB
+    db.session.add_all([user1, user2])
+    db.session.commit()
+
+    # Create rides
+    ride1 = Ride(
+        source="Hyderabad",
+        destination="Bangalore",
+        date=date(2025, 5, 25),
+        price=500.0,
+        driver="Alice"
+    )
+    ride2 = Ride(
+        source="Chennai",
+        destination="Hyderabad",
+        date=date(2025, 5, 25),
+        price=450.0,
+        driver="Bob"
+    )
+
+    db.session.add_all([ride1, ride2])
+    db.session.commit()
+
+    print("Database seeded successfully!")
